@@ -1,0 +1,84 @@
+Longest String Chain
+
+Given a list of words, each word consists of English lowercase letters.
+
+Let's say word1 is a predecessor of word2 if and only if we can add exactly one letter anywhere in word1 to make it equal to word2. For example, "abc" is a predecessor of "abac".
+
+A word chain is a sequence of words [word_1, word_2, ..., word_k] with k >= 1, where word_1 is a predecessor of word_2, word_2 is a predecessor of word_3, and so on.
+
+Return the longest possible length of a word chain with words chosen from the given list of words.
+
+ 
+
+Example 1:
+
+Input: words = ["a","b","ba","bca","bda","bdca"]
+Output: 4
+Explanation: One of the longest word chain is "a","ba","bda","bdca".
+Example 2:
+
+Input: words = ["xbc","pcxbcf","xb","cxbc","pcxbc"]
+Output: 5
+ 
+
+Constraints:
+
+1 <= words.length <= 1000
+1 <= words[i].length <= 16
+words[i] only consists of English lowercase letters.
+
+Solution:
+C++:
+
+class Solution {
+public:
+    //helper fucntion for deleting one character at given index and returning the string
+    string helper(int i,string s){
+        string ans="";
+        for(int j=0;j<s.size();j++){
+            if(j!=i){
+                ans+=s[j];
+            }
+        }
+        return ans;
+    }
+    int longestStrChain(vector<string>& words) {
+        // initializing the dp vector
+        vector<int> dp(words.size(),1);
+        
+        // vector to sort strings in descending order
+        vector<pair<int,string>> new_words;
+        for(auto i:words){
+            pair<int,string> temp;
+            temp=make_pair(i.size(),i);
+            new_words.push_back(temp);
+        }
+        sort(new_words.rbegin(),new_words.rend());
+        words.clear();
+        for(auto i:new_words){
+            words.push_back(i.second);
+        }
+        // creating map to keep track of indicies
+        unordered_map<string,int> track;
+        for(int i=0;i<words.size();i++){
+            track[words[i]]=i;
+        }
+        // main loop
+        for(int i=0;i<words.size();i++){
+            for(int x=0;x<words[i].size();x++){
+                string h=helper(x,words[i]);
+                if(track.find(h)!=track.end()){
+                    dp[track[h]]=max(dp[track[h]],dp[track[words[i]]]+1);
+                }
+            }
+        }
+        // finding lenth of maximum chain
+        int max_=0;
+        for(auto i:dp){
+            if(i>max_){
+                max_=i;
+            }
+        }
+        return max_;
+    }
+};
