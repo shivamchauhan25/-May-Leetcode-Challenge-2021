@@ -1,0 +1,81 @@
+N-Queens II
+
+The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+
+Given an integer n, return the number of distinct solutions to the n-queens puzzle.
+
+ 
+
+Example 1:
+
+
+Input: n = 4
+Output: 2
+Explanation: There are two distinct solutions to the 4-queens puzzle as shown.
+Example 2:
+
+Input: n = 1
+Output: 1
+ 
+
+Constraints:
+
+1 <= n <= 9
+
+Solution:
+C++:
+
+class Solution {
+public:
+    
+    int ans = 0;
+    bool ok(vector<string> temp,int r,int c,int n)
+    {
+        for(int i=0;i<c;i++){
+            if(temp[r][i]=='Q')
+                return false;
+        }
+        
+        for(int i=r-1,j=c-1;i>=0 and j>=0;i--,j--)
+        {
+            if(temp[i][j]=='Q')
+                return false;
+        }
+        
+        for(int i=r+1,j=c-1;i<n and j>=0;i++,j--)
+        {
+            if(temp[i][j]=='Q')
+                return false;
+        }
+        return true;
+    }
+    
+    void recurse(int col,int n,vector<string> temp)
+    {
+        if(col==n){
+            ans++;
+        }
+        
+        for(int i=0;i<n;i++)
+        {
+            if(ok(temp,i,col,n)){
+                temp[i][col] = 'Q';
+                recurse(col+1,n,temp);
+                temp[i][col] = '.';
+            }
+        }
+    }
+    
+    int totalNQueens(int n)
+    {
+        vector<string> temp;
+        string s = "";
+        for(int i=0;i<n;i++)
+            s+=".";
+        for(int i=0;i<n;i++)
+            temp.push_back(s);
+        
+        recurse(0,n,temp);
+        return ans;
+    }
+};
